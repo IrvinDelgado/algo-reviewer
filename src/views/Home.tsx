@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useSprings, animated } from 'react-spring';
 import '../styles/main.css'
 
-
-
 const Home = () => {
   const algoName = 'Bubble Sort';
   const algoCode = 
@@ -16,29 +14,46 @@ const Home = () => {
           # swapping data if the element is less than next element in the array
           elements[i], elements[i + 1] = elements[i + 1], elements[i]
   `;
-  const NUM_ARR = [2, 3, 1, 6, 5, 10, 7, 9, 4, 8];
+  useEffect(()=>{setOrder([2, 3, 1, 6, 5, 10, 7, 9, 4, 8])},[])
+  const NUM_ARR:number[] = [];
   const [order, setOrder] = useState(NUM_ARR);
   const left = useRef(0);
   const right = useRef(1);
+  const lastIdx = useRef(10); 
 
   const animationFunctions = (idx:number) => {
-    switch (idx) {
-      case left.current:
-      case right.current:
+    switch (true) {
+      case idx >= lastIdx.current:
         return {
+          height:order[idx]*35,
+          backgroundColor: 'grey',
+          scale: 1,
+        }
+      case left.current===idx:
+      case right.current===idx:
+        return {
+          height:order[idx]*35,
           backgroundColor: '#46e891',
+          scale: 1.1,
         }
       default:
         return {
+          height:order[idx]*35,
           backgroundColor: '#F4F2F3',
+          scale: 1,
         }
     }
   }
 
   const [springs, api] = useSprings(order.length, (idx) => animationFunctions(idx));
 
+
+  // DEBUG: Swap Animation
+  // WORKS: When we do a hot reload, rerender first works flawlessly
+  // NOTES: First lets find out where the swap should happen
   const swap = (arr: number[], leftIdx:number, rightIdx:number) => {
     const newArr = [...arr];
+    console.log(newArr)
     if(newArr[leftIdx]>newArr[rightIdx])
       [newArr[leftIdx], newArr[rightIdx]] = [newArr[rightIdx], newArr[leftIdx]];
     return newArr
@@ -46,9 +61,10 @@ const Home = () => {
 
   const swapArr = () => {
     setOrder((prevState)=>swap(prevState,left.current,right.current));
-    if(right.current===order.length-1) {
+    if(right.current===lastIdx.current-1) {
       left.current = 0;
       right.current = 1; 
+      lastIdx.current--;
       return
     }
     left.current++;
@@ -69,7 +85,6 @@ const Home = () => {
           <animated.div key={indx} className="bar" style={{
             ...animation, 
             height:order[indx]*35,
-            y:0,
           }}/>
         ))}
       </div>
