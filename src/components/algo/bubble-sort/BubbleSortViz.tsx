@@ -6,7 +6,7 @@ import { generateArray } from '../../utilities/helpers';
 
 const BubbleSortViz = () => {
   
-  const originalOrder = useRef([0])
+  const originalOrder = useRef([0]);
   const [order, setOrder] = useState([0]);
   const left = useRef(0);
   const right = useRef(1);
@@ -17,10 +17,9 @@ const BubbleSortViz = () => {
   const isPaused = useRef(false);
   const interval = 500;
 
-  useEffect(()=>{
-    const numArray = generateArray(1,10);
-    originalOrder.current = numArray;
-    setOrder(numArray);
+  useEffect(() => {
+    originalOrder.current = generateArray(1,10);
+    setOrder(originalOrder.current);
   },[])
 
   const animationFunctions = (idx:number) => {
