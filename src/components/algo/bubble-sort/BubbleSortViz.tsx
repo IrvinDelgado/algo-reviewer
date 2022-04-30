@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSprings, animated } from 'react-spring';
+import { VizButtons } from '../../shared/VizButtons';
 import { generateArray } from '../../utilities/helpers';
 
 
@@ -115,12 +116,7 @@ const BubbleSortViz = () => {
           }}/>
         ))}
       </div>
-      <div className="algoVizBtns">
-          <button className='btn btn-step' onClick={bubbleSortStep}>Step</button>
-          <button className='btn btn-play' onClick={bubbleSortPlay}>Play</button>
-          <button className='btn btn-pause' onClick={bubbleSortPause}>Pause</button>
-          <button className='btn' onClick={bubbleSortReset}>Reset</button>
-      </div>
+      <VizButtons step={bubbleSortStep} play={bubbleSortPlay} pause={bubbleSortPause} reset={bubbleSortReset}/>
     </div>
   )
 
