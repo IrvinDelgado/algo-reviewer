@@ -2,6 +2,9 @@ body {
   background-color: #383F51;
   color: #F4F2F3;
 }
+pre {
+  margin: 0;
+}
 
 .bar {
   border-radius: 5px;
@@ -22,17 +25,49 @@ body {
   justify-content: space-evenly;
   width: 840px;
   height: 400px;
+  padding-bottom: 20px;
 }
 .algoVizBtns {
-  padding-top: 50px;
-  width: 400px;
   margin: auto;
+  padding-top: 20px;
+  padding-left: 340px;
   display: flex;
-  flex-direction: row ;
-  justify-content: space-evenly;
+  flex-direction: row;
+  gap: 10px;
 }
 .algoCode {
   font-size: 20px;
   font-weight: bold;
-  padding: 20px;
+  padding-left: 20px;
+}
+
+.btn {
+  border: 0;
+  color:#383F51;
+  border-radius: .5rem;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 1px 3px 0 rgba(221, 13, 13, 0.1), 0 1px 2px 0 rgba(238, 29, 29, 0.06);
+  cursor: pointer;
+}
+.btn:active {
+  transform:translateY(4px);
+}
+.btn:hover {
+  transform: scale(1.1);
+}
+
+.btn:focus-visible {
+  box-shadow: none;
+}
+
+.btn-step {
+  background-color: #FFD166;
+}
+.btn-play{
+  background-color: #46E891;
+}
+.btn-pause {
+  background-color: tomato;
 }

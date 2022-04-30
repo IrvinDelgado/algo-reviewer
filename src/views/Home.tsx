@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSprings, animated } from 'react-spring';
+
 import '../styles/main.css'
 
 const Home = () => {
   const algoName = 'Bubble Sort';
-  const algoCode = 
-  `
+  // Maybe use something like prism
+  const algoCode = `
   def BubbleSort(elements):
     # Looping from size of array from last index[-1] to index [0]
     for n in range(len(elements)-1, 0, -1):
@@ -14,31 +15,39 @@ const Home = () => {
           # swapping data if the element is less than next element in the array
           elements[i], elements[i + 1] = elements[i + 1], elements[i]
   `;
-  useEffect(()=>{setOrder([2, 3, 1, 6, 5, 10, 7, 9, 4, 8])},[])
+  useEffect(()=>setOrder([2, 3, 1, 6, 5, 10, 7, 9, 4, 8]),[])
   const NUM_ARR:number[] = [];
   const [order, setOrder] = useState(NUM_ARR);
   const left = useRef(0);
   const right = useRef(1);
-  const lastIdx = useRef(10); 
+  const lastIdx = useRef(10);
+  const hasSwappedInLoop = useRef(false);
+  const sortingDone = useRef(false);
+  const isPlaying = useRef(false);
+  const isPaused = useRef(false);
+  const interval = 500;
 
   const animationFunctions = (idx:number) => {
+    if(sortingDone.current) {
+      return {
+        backgroundColor: '#46E891',
+        scale: 1,
+      }
+    }
     switch (true) {
       case idx >= lastIdx.current:
         return {
-          height:order[idx]*35,
-          backgroundColor: 'grey',
+          backgroundColor: '#46E891',
           scale: 1,
         }
       case left.current===idx:
       case right.current===idx:
         return {
-          height:order[idx]*35,
-          backgroundColor: '#46e891',
+          backgroundColor: '#FFD166',
           scale: 1.1,
         }
       default:
         return {
-          height:order[idx]*35,
           backgroundColor: '#F4F2F3',
           scale: 1,
         }
@@ -47,21 +56,20 @@ const Home = () => {
 
   const [springs, api] = useSprings(order.length, (idx) => animationFunctions(idx));
 
-
-  // DEBUG: Swap Animation
-  // WORKS: When we do a hot reload, rerender first works flawlessly
-  // NOTES: First lets find out where the swap should happen
   const swap = (arr: number[], leftIdx:number, rightIdx:number) => {
     const newArr = [...arr];
-    console.log(newArr)
-    if(newArr[leftIdx]>newArr[rightIdx])
+    if(newArr[leftIdx]>newArr[rightIdx]){
       [newArr[leftIdx], newArr[rightIdx]] = [newArr[rightIdx], newArr[leftIdx]];
+      hasSwappedInLoop.current = true;
+    }
     return newArr
   }
 
-  const swapArr = () => {
+  const bubbleSortStep = () => {
     setOrder((prevState)=>swap(prevState,left.current,right.current));
     if(right.current===lastIdx.current-1) {
+      if(hasSwappedInLoop.current===false){sortingDone.current = true;}
+      hasSwappedInLoop.current=false;
       left.current = 0;
       right.current = 1; 
       lastIdx.current--;
@@ -70,6 +78,33 @@ const Home = () => {
     left.current++;
     right.current++;
   };
+
+  const bubbleSortPlay = () => {
+    if(isPlaying.current===true) return
+    const play = setInterval(()=>{
+      if(sortingDone.current || isPaused.current){
+        isPlaying.current = false;
+        isPaused.current = false;
+        clearInterval(play);
+        return
+      }
+      isPlaying.current = true;
+      bubbleSortStep();
+    }, interval);
+  }
+
+  const bubbleSortPause = () => {
+    isPaused.current = true;
+  }
+
+  const bubbleSortReset = () => {
+    left.current = 0;
+    right.current = 1;
+    lastIdx.current = 10;
+    sortingDone.current = false;
+    hasSwappedInLoop.current = false;
+    setOrder([2, 3, 1, 6, 5, 10, 7, 9, 4, 8]);
+  }
   
   useEffect(()=>{
     api.start(index=>(animationFunctions(index)));
@@ -78,8 +113,6 @@ const Home = () => {
   return (
     <div>
       <div className='algoName'>{algoName}</div>
-      
-      <button onClick={swapArr}>SWAP</button>
       <div className='algoViz'>
         {springs.map((animation,indx) => (
           <animated.div key={indx} className="bar" style={{
@@ -87,6 +120,12 @@ const Home = () => {
             height:order[indx]*35,
           }}/>
         ))}
+      </div>
+      <div className="algoVizBtns">
+          <button className='btn btn-step' onClick={bubbleSortStep}>Step</button>
+          <button className='btn btn-play' onClick={bubbleSortPlay}>Play</button>
+          <button className='btn btn-pause' onClick={bubbleSortPause}>Pause</button>
+          <button className='btn' onClick={bubbleSortReset}>Reset</button>
       </div>
       <div className='algoCode'>
         <pre>
