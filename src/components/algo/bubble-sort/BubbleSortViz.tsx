@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSprings, animated } from 'react-spring';
+import { generateArray } from '../../utilities/helpers';
 
 
 const BubbleSortViz = () => {
@@ -16,7 +17,7 @@ const BubbleSortViz = () => {
   const interval = 500;
 
   useEffect(()=>{
-    const numArray = [8, 4, 6, 2, 1, 5, 3, 9, 7, 10];
+    const numArray = generateArray(1,10);
     originalOrder.current = numArray;
     setOrder(numArray);
   },[])
